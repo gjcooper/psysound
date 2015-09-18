@@ -23,14 +23,14 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         data
     end
     properties(Hidden,Transient)
-        TypeSet = matlab.system.StringSet({'norm', 'phase', 'time', 'sing'});
+        TypeSet = matlab.system.StringSet({'norm', 'phase', 'time', 'sing', 'complex'});
         EarSet = matlab.system.StringSet({'left', 'right', 'na'});
     end   
     
     methods
         %% Setter Methods
         function obj = set.Frequency(obj,erIn)
-            if erIn > 0
+            if erIn > 0 || isnan(erIn)
                 obj.Frequency = erIn;
             else
                 obj.Frequency = NaN;
@@ -39,7 +39,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         end
 
         function obj = set.Duration(obj,erIn)
-            if erIn > 0
+            if erIn > 0 || isnan(erIn)
                 obj.Duration = erIn;
             else
                 obj.Duration = NaN;
@@ -48,7 +48,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         end
         
         function obj = set.Sample_frequency(obj,erIn)
-            if erIn > 0
+            if erIn > 0 || isnan(erIn)
                 obj.Sample_frequency = erIn;
             else
                 obj.Sample_frequency = NaN;
@@ -57,7 +57,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         end
         
         function obj = set.Ramp_length_start(obj,erIn)
-            if erIn >= 0 && erIn <= obj.Duration
+            if (erIn >= 0 && erIn <= obj.Duration) || isnan(erIn)
                 obj.Ramp_length_start = erIn;
             else
                 obj.Ramp_length_start = NaN;
@@ -66,7 +66,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         end
         
         function obj = set.Ramp_length_end(obj,erIn)
-            if erIn >= 0 && erIn <= obj.Duration
+            if (erIn >= 0 && erIn <= obj.Duration) || isnan(erIn)
                 obj.Ramp_length_end = erIn;
             else
                 obj.Ramp_length_end = NaN;
@@ -75,7 +75,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         end
         
         function obj = set.Amplitude(obj,erIn)
-            if erIn >= 0 && erIn <= 1
+            if (erIn >= 0 && erIn <= 1) || isnan(erIn)
                 obj.Amplitude = erIn;
             else
                 obj.Amplitude = NaN;
@@ -84,7 +84,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         end
         
         function obj = set.Delay(obj,erIn)
-            if erIn >= 0 && erIn <= obj.Duration
+            if (erIn >= 0 && erIn <= obj.Duration) || isnan(erIn)
                 obj.Delay = erIn;
             else
                 obj.Delay = NaN;

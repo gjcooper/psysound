@@ -18,8 +18,12 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
     methods
         %%
         function obj = Sound(s)
-            obj.spec = s;
-            obj.Generate();
+            if isa(s, 'PsySound.SoundSpec')
+                obj.spec = s;
+                obj.Generate();
+            else
+                obj.data = s;
+            end
         end
         
         function Plot(obj)
@@ -45,6 +49,42 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
         
         function Save(obj)
             audiowrite(obj.Filename, obj.data, obj.spec.Sample_frequency, 'BitsPerSample', obj.spec.Bitrate)
+        end
+        
+        function r = combine(obj1, obj2)
+            if isa(obj1, 'PsySound.Sound') && isa(obj2, 'PsySound.Sound')
+                %Build specification                
+                c_spec = PsySound.SoundSpec();
+                c_spec.Frequency = NaN;
+                c_spec.Duration = max(obj1.spec.Duration, obj2.spec.Duration);
+                if obj1.spec.Sample_frequency ~= obj1.spec.Sample_frequency
+                    error('Sample frequencies must be identical for sound addition')
+                end
+                c_spec.Sample_frequency = obj1.spec.Sample_frequency;
+                c_spec.Amplitude = max(obj1.spec.Amplitude, obj2.spec.Amplitude);
+                c_spec.Type = 'complex';
+                c_spec.Ear = 'na';
+                if obj1.spec.Bitrate ~= obj1.spec.Bitrate
+                    error('bit rates must be identical for sound addition')
+                end
+                c_spec.Bitrate = obj1.spec.Bitrate;
+                c_spec.Ramp_length_start = NaN;
+                c_spec.Ramp_length_end = NaN;
+                c_spec.Delay = NaN;
+                %Create sound data
+                if length(obj1.data) == length(obj2.data)
+                    c_data = obj1.data + obj2.data;
+                elseif length(obj1.data) > length(obj2.data)
+                    c_data = obj1.data + [obj2.data;zeros(length(obj1.data)-length(obj2.data),2)];
+                else
+                    c_data = obj2.data + [obj1.data;zeros(length(obj2.data)-length(obj1.data),2)];
+                end
+                %Scale to -Amp to Amp
+                c_data = c_data./max(c_data(:)).*c_spec.Amplitude;
+                
+                r = PsySound.Sound(c_data);
+                r.spec = c_spec;
+            end
         end
     end
     methods(Access = private)
