@@ -86,8 +86,7 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
                 r.spec = c_spec;
             end
         end
-    end
-    methods(Access = private)
+        
         function Generate(obj)
             sstep=1/obj.spec.Sample_frequency;
             numcycles=obj.spec.Frequency*obj.spec.Duration;
