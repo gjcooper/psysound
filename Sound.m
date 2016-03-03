@@ -98,6 +98,12 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
             
             % generate two sounds 
             chan1=obj.spec.Amplitude*PsySound.rcos(sin(linspace(0,numcycles*2*pi,bins)),rfisteps,rfosteps);
+			% Ref for possible square wav generation addition
+			% a=linspace(0,numcycles*2*pi,bins);
+			% tmp=mod(a,1/freq);
+			% c=1/freq*dcycle/100;
+			% b=(tmp<c);
+			% chan1=obj.spec.Amplitude*PsySound.rcos(b, rfisteps, rfosteps);
             if strcmp(obj.spec.Type,'phase')
                 chan2=obj.spec.Amplitude*PsySound.rcos(sin(linspace(StartPhase*2*pi,(StartPhase*2*pi + numcycles*2*pi),bins)),rfisteps,rfosteps);
                 if strcmp(obj.spec.Ear,'left')
