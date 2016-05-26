@@ -15,8 +15,8 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
         Type = 'norm';
         Ear = 'na';
         Bitrate = 16;
-        Ramp_length_start@double scalar = 0.05;
-        Ramp_length_end@double scalar = 0.05;
+        Ramp_length_start@double scalar = 0.005;
+        Ramp_length_end@double scalar = 0.005;
         Delay@double scalar = 0;
     end
     properties(Access = private)
