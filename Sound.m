@@ -37,14 +37,18 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
             end
             lchan = obj.data(:,1)';
             rchan = obj.data(:,2)';
-            plot(t,lchan)
-            hold
-            plot(t,rchan,'r')
-            xlabel('seconds')
+            plot(t,lchan);
+            hold;
+            plot(t,rchan,'r');
+            xlabel('seconds');
         end
         
         function Play(obj)
             sound(obj.data,obj.spec.Sample_frequency)
+        end
+        
+        function d = DataView(obj)
+            d = obj.data;
         end
         
         function Save(obj)
@@ -81,6 +85,34 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
                 end
                 %Scale to -Amp to Amp
                 c_data = c_data./max(c_data(:)).*c_spec.Amplitude;
+                
+                r = PsySound.Sound(c_data);
+                r.spec = c_spec;
+            end
+        end
+        
+        function r = add(obj1, obj2)
+            if isa(obj1, 'PsySound.Sound') && isa(obj2, 'PsySound.Sound')
+                %Build Spec
+                c_spec = PsySound.SoundSpec();
+                c_spec.Frequency = NaN;
+                c_spec.Duration = obj1.spec.Duration + obj2.spec.Duration;
+                if obj1.spec.Sample_frequency ~= obj1.spec.Sample_frequency
+                    error('Sample frequencies must be identical for sound addition')
+                end
+                c_spec.Sample_frequency = obj1.spec.Sample_frequency;
+                c_spec.Amplitude = max(obj1.spec.Amplitude, obj2.spec.Amplitude);
+                c_spec.Type = 'complex';
+                c_spec.Ear = 'na';
+                if obj1.spec.Bitrate ~= obj1.spec.Bitrate
+                    error('bit rates must be identical for sound addition')
+                end
+                c_spec.Bitrate = obj1.spec.Bitrate;
+                c_spec.Ramp_length_start = NaN;
+                c_spec.Ramp_length_end = NaN;
+                c_spec.Delay = NaN;
+                %Create sound data
+                c_data = cat(1,obj1.data, obj2.data);
                 
                 r = PsySound.Sound(c_data);
                 r.spec = c_spec;
