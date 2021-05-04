@@ -8,16 +8,16 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
     %   Not currently designed to be able to be saved and loaded correctly.
     
     properties
-        Frequency@double scalar = 1000;
-        Duration@double scalar = 1;
-        Sample_frequency@double scalar = 44100;
-        Amplitude@double scalar = 0.9;
+        Frequency(1,1) double = 1000;
+        Duration(1,1) double = 1;
+        Sample_frequency(1,1) double = 44100;
+        Amplitude(1,1) double = 0.9;
         Type = 'norm';
         Ear = 'na';
         Bitrate = 16;
-        Ramp_length_start@double scalar = 0.005;
-        Ramp_length_end@double scalar = 0.005;
-        Delay@double scalar = 0;
+        Ramp_length_start(1,1) double = 0.005;
+        Ramp_length_end(1,1) double = 0.005;
+        Delay(1,1) double = 0;
     end
     properties(Access = private)
         data
@@ -29,7 +29,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
     
     methods
         %% Setter Methods
-        function obj = set.Frequency(obj,erIn)
+        function set.Frequency(obj,erIn)
             if erIn > 0 || isnan(erIn)
                 obj.Frequency = erIn;
             else
@@ -38,7 +38,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
             end
         end
 
-        function obj = set.Duration(obj,erIn)
+        function set.Duration(obj,erIn)
             if erIn > 0 || isnan(erIn)
                 obj.Duration = erIn;
             else
@@ -47,7 +47,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
             end
         end
         
-        function obj = set.Sample_frequency(obj,erIn)
+        function set.Sample_frequency(obj,erIn)
             if erIn > 0 || isnan(erIn)
                 obj.Sample_frequency = erIn;
             else
@@ -56,7 +56,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
             end
         end
         
-        function obj = set.Ramp_length_start(obj,erIn)
+        function set.Ramp_length_start(obj,erIn)
             if (erIn >= 0 && erIn <= obj.Duration) || isnan(erIn)
                 obj.Ramp_length_start = erIn;
             else
@@ -65,7 +65,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
             end
         end
         
-        function obj = set.Ramp_length_end(obj,erIn)
+        function set.Ramp_length_end(obj,erIn)
             if (erIn >= 0 && erIn <= obj.Duration) || isnan(erIn)
                 obj.Ramp_length_end = erIn;
             else
@@ -74,7 +74,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
             end
         end
         
-        function obj = set.Amplitude(obj,erIn)
+        function set.Amplitude(obj,erIn)
             if (erIn >= 0 && erIn <= 1) || isnan(erIn)
                 obj.Amplitude = erIn;
             else
@@ -83,7 +83,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
             end
         end
         
-        function obj = set.Delay(obj,erIn)
+        function set.Delay(obj,erIn)
             if (erIn >= 0 && erIn <= obj.Duration) || isnan(erIn)
                 obj.Delay = erIn;
             else
@@ -96,7 +96,7 @@ classdef SoundSpec < matlab.System & matlab.mixin.Copyable
             value = obj.Delay;
         end
         
-        function obj = set.Bitrate(obj,erIn)
+        function set.Bitrate(obj,erIn)
             if erIn == 16 || erIn == 24 || erIn == 32
                 obj.Bitrate = erIn;
             else
