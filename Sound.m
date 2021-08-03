@@ -8,7 +8,7 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
     %   Not currently designed to be able to be saved and loaded correctly.
     
     properties
-        spec PsySound.SoundSpec;
+        spec@PsySound.SoundSpec;
         Filename = 'temp.wav';
     end
     properties(Access = private)
