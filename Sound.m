@@ -37,16 +37,20 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
             end
             lchan = obj.data(:,1)';
             rchan = obj.data(:,2)';
-            plot(t,lchan)
-            hold
-            plot(t,rchan,'r')
-            xlabel('seconds')
+            plot(t,lchan);
+            hold;
+            plot(t,rchan,'r');
+            xlabel('seconds');
         end
 
         function Play(obj)
             sound(obj.data,obj.spec.Sample_frequency)
         end
-
+        
+        function d = DataView(obj)
+            d = obj.data;
+        end
+        
         function Save(obj)
             audiowrite(obj.Filename, obj.data, obj.spec.Sample_frequency, 'BitsPerSample', obj.spec.Bitrate)
         end
@@ -86,7 +90,37 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
                 r.spec = c_spec;
             end
         end
-
+    end
+    methods(Access = private)
+        
+        function r = add(obj1, obj2)
+            if isa(obj1, 'PsySound.Sound') && isa(obj2, 'PsySound.Sound')
+                %Build Spec
+                c_spec = PsySound.SoundSpec();
+                c_spec.Frequency = NaN;
+                c_spec.Duration = obj1.spec.Duration + obj2.spec.Duration;
+                if obj1.spec.Sample_frequency ~= obj1.spec.Sample_frequency
+                    error('Sample frequencies must be identical for sound addition')
+                end
+                c_spec.Sample_frequency = obj1.spec.Sample_frequency;
+                c_spec.Amplitude = max(obj1.spec.Amplitude, obj2.spec.Amplitude);
+                c_spec.Type = 'complex';
+                c_spec.Ear = 'na';
+                if obj1.spec.Bitrate ~= obj1.spec.Bitrate
+                    error('bit rates must be identical for sound addition')
+                end
+                c_spec.Bitrate = obj1.spec.Bitrate;
+                c_spec.Ramp_length_start = NaN;
+                c_spec.Ramp_length_end = NaN;
+                c_spec.Delay = NaN;
+                %Create sound data
+                c_data = cat(1,obj1.data, obj2.data);
+                
+                r = PsySound.Sound(c_data);
+                r.spec = c_spec;
+            end
+        end
+        
         function Generate(obj)
             sstep=1/obj.spec.Sample_frequency;
             numcycles=obj.spec.Frequency*obj.spec.Duration;
@@ -98,6 +132,12 @@ classdef Sound < matlab.System & matlab.mixin.Copyable
 
             % generate two sounds
             chan1=obj.spec.Amplitude*PsySound.rcos(sin(linspace(0,numcycles*2*pi,bins)),rfisteps,rfosteps);
+			% Ref for possible square wav generation addition
+			% a=linspace(0,numcycles*2*pi,bins);
+			% tmp=mod(a,1/freq);
+			% c=1/freq*dcycle/100;
+			% b=(tmp<c);
+			% chan1=obj.spec.Amplitude*PsySound.rcos(b, rfisteps, rfosteps);
             if strcmp(obj.spec.Type,'phase')
                 chan2=obj.spec.Amplitude*PsySound.rcos(sin(linspace(StartPhase*2*pi,(StartPhase*2*pi + numcycles*2*pi),bins)),rfisteps,rfosteps);
                 if strcmp(obj.spec.Ear,'left')
