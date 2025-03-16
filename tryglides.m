@@ -1,0 +1,32 @@
+function [stim]=tryglides()
+        fs=44100;
+        rfi = 0;
+        rfo = 0.01;
+        duration = 0.03;
+        amp = 0.9;
+%         omegaset=[      10, 2000,       500,    2.0, 3.5;
+%                         200, 400,       1000,   3.5, 5.0;
+%                         200, 400,       1000,   4.5, 6.0;
+%                         200, 400,       1000,   5.5, 7.0;
+%                         200, 400,       1000,   6.5, 8.0;
+%                         200, 400,       1000,   7.5, 9.0;
+%                         -100, 600,      3300,   3.5, 5.0;
+%                         -100, 600,      3300,   4.5, 6.0;
+%                         -100, 600,      3300,   5.5, 7.0;
+%                         -100, 600,      3300,   6.5, 8.0;
+%                         -100, 600,      3300,   7.5, 9.0;
+%                         ];
+%         omegaset=[      10000, 16367,       1000,   0.00, 0.03; ];
+        omegaset=[      7000, 10260,       1000,   0.00, 0.03; ];
+        gg=glides(omegaset, fs);
+%         specgram(gg);
+        sstep=1/fs;
+        bins=round(duration/sstep);
+        rfisteps=((rfi/sstep)/bins)*100;
+        rfosteps=((rfo/sstep)/bins)*100;
+        stimi = amp*gg.';
+        stimj = rcos(stimi, rfisteps, rfosteps);
+        stimk = [stimj',stimj'];
+        stim = stimk;
+        wavwrite(stim,44100,16,'glidetest.wav')
+%         wavplay(gg, fs);
